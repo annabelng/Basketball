@@ -1,0 +1,54 @@
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import javax.swing.JFrame;
+import javax.swing.Timer;
+
+
+public class Driver implements KeyListener { //add more things if you need to
+	
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Driver d = new Driver();
+
+	}
+	
+	public Driver(){
+		JFrame f = new JFrame("Basketball");
+		f.setSize(1800, 1020);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.getContentPane().setBackground(Color.black);
+		f.setResizable(false);
+		f.setLayout(null);
+		
+		
+		
+		
+		f.setVisible(true);
+
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}
+
+
