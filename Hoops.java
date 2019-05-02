@@ -42,13 +42,13 @@ public class Hoops extends JPanel {
 		ImageIcon ast = new ImageIcon(src + filename);
 		
 		if(side.equals("right")) {
-			this.x = 930;
-			this.y = 110;
+			this.x = 1040;
+			this.y = 68;
 		}
 		
 		if(side.equals("left")) {
-			this.x = 120;
-			this.y = 110;
+			this.x = -70;
+			this.y = 68;
 		}
 		img = getImg(filename);
 		

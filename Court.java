@@ -18,8 +18,8 @@ public class Court extends JPanel{
 		//sets up board image to be drawn
 		String src = new File("").getAbsolutePath() + "/src/";
 		ImageIcon ast = new ImageIcon(src + filename);
-		this.x = 100;
-		this.y = 200;
+		this.x = 0;
+		this.y = -100;
 
 		img = getImage(filename);
 	}

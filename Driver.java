@@ -14,8 +14,8 @@ public class Driver extends JPanel implements ActionListener, KeyListener { //ad
 	
 	Court court;
 	Hoops right, left;
-	int screen_width = 1200;
-	int screen_height = 600;
+	int screen_width = 1350;
+	int screen_height = 660;
 	
 	public void paint(Graphics g) {
 		super.paintComponents(g);
