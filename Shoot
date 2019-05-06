@@ -1,0 +1,28 @@
+int hoopX, hoopY;
+int courtLength;
+int time, acceleration;
+
+double successProb;
+
+public void shoot(int playerX, int ballY){
+  //distance
+  double dis = Math.abs(playerX-hoopX);
+  //prob depends on the distance from the opposite hoop
+  successProb = (double)(1-dis/courtLength);
+  
+  
+  //velocity = distance/time
+  //set time it takes for the ball to reach the hoop
+  
+  
+  //if success
+  if(Math.random() <= successProb){
+    //set ball vx to make it into the hoop
+    ball.setVX((int)(dis/time);
+    //set ball vy
+    // y = 1/2 a t^2
+    ball.setVY((int)(Math.abs(hoopY - ballY)/time)-(0.5)(acceleration)(time));
+      
+  }
+  
+}
