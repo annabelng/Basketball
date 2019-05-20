@@ -14,6 +14,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener { //ad
 	
 	Court court;
 	Hoops right, left;
+	Player Player1;
 	int screen_width = 1350;
 	int screen_height = 660;
 	
@@ -24,6 +25,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener { //ad
 		court.paint(g);
 		right.paint(g);
 		left.paint(g);
+		Player1.paint(g);
 	}
 	public void update() {
 
@@ -57,6 +59,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener { //ad
 		court = new Court("basketballCourt.png");
 		right = new Hoops("rightHoop.png", "right");
 		left = new Hoops("leftHoop.png", "left");
+		Player1 = new Player("runn.png");
 		f.add(this);
 
 		// end creating objects

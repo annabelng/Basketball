@@ -43,12 +43,12 @@ public class Hoops extends JPanel {
 		
 		if(side.equals("right")) {
 			this.x = 1040;
-			this.y = 68;
+			this.y = 28;
 		}
 		
 		if(side.equals("left")) {
 			this.x = -70;
-			this.y = 68;
+			this.y = 28;
 		}
 		img = getImg(filename);
 		
