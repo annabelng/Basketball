@@ -114,5 +114,29 @@ public class Basketball extends JPanel{
 		return img.getHeight(null);
 	}
 	
+	public void setdx(double d){
+		this.dx = d;
+	}
+	
+	public void setdy(double d){
+		this.dx = d;
+	}
+	
+	public void shoot(int hoopX, int hoopY, int courtLength, int ballX, int ballY){
+		double dis = Math.abs(ballX - hoopX);
+		double successProb = (double)(1-(double)(dis)/(courtLength));
+		
+		//velocity = distance/time
+		//set time it takes for the ball to reach the hoop
+		
+		if(Math.random()<=successProb){
+			setdx(20);
+			setdy(((double)(hoopY)/((double)(dis)/dx)) - (double)(0.5*(gravity)*((double)(dis)/dx)));
+		}else{
+			setdx(20);
+			setdy(((double)(hoopY)/((double)(dis)/dx)) - (double)(0.5*(gravity)*((double)(dis)/dx))+(double)(Math.random()*5+5+1));
+		}
+		
+	}
 	
 }
