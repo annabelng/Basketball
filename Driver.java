@@ -1,12 +1,17 @@
 import java.awt.Color;
+import java.awt.Font;
+
 import javax.sound.sampled.Clip;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -15,34 +20,50 @@ import javax.swing.Timer;
  * 
  * @authors annabelNg, jaidenSmith, scottyKrysl, minjunKim
  */
-public class Driver extends JPanel implements ActionListener, KeyListener { // add more things if you need to
+public class Driver extends JPanel implements ActionListener, KeyListener, MouseListener { // add more things if you need to
 
 	/**
 	 * Sets up the different objects
 	 */
 	Court court;
+	Background background;
 	Hoops right, left;
 	Player Player1;
 	Player Player2;
 	Basketball ball;
+	Scoreboard scoreboard;
 	
-	//Music music;
-	//Clip c;
+	JLabel scoreV = new JLabel("");
+	int visit =0;
+	JLabel scoreH = new JLabel("");
+	int home =0;
+	
+	Font font = new Font("Courier New", 1, 50);
+	
+	Music music;
+	Clip c;
+	
 	int screen_width = 1350;
 	int screen_height = 660;
 
-	int court_floor = 410;
-	int court_wall = 1090;
+	int court_floor = 440;
+	int court_wall = 1245;
 
-	int radius = 50;// size
-	int y = 0; // ball top left corner
+	int radius = 30;// size
+	int y = court_floor-radius; // ball top left corner
 	int x = 300; // ball top left corner
-	int dx = 10; // velocity in the x
-	int dy = 10; // velocity in the y
+	double dx = 0; // velocity in the x
+	double dy = 0; // velocity in the y
+	
+	double dis = Math.abs(x - 1173);
+	double hoopY = 169;
+	double hoopXR= 1173;
+	int maxShootHeight = 74;
 
 	double gravity = 15;
 	double energyloss = .65;
 	double dt = .2;
+	double time = 0;
 
 	/**
 	 * Paints and repaints the images on the board rather than just adding the
@@ -54,6 +75,8 @@ public class Driver extends JPanel implements ActionListener, KeyListener { // a
 		super.paintComponents(g);
 
 		// painting the board png
+		background.paint(g);
+		scoreboard.paint(g);
 		court.paint(g);
 		right.paint(g);
 		left.paint(g);
@@ -78,6 +101,10 @@ public class Driver extends JPanel implements ActionListener, KeyListener { // a
 		} else {
 			Player2.paint(g);
 		}
+		
+		if(Player1.getShoot() == true) {
+			Player2.shoot(g);
+		}
 
 	}
 
@@ -85,40 +112,9 @@ public class Driver extends JPanel implements ActionListener, KeyListener { // a
 		// fix ball paint method so that it doesn't repaint the ball after every
 		// iteration of the below loops
 
-		if (x + dx > court_wall - radius - 1) {
-			x = court_wall - radius - 1;
-			dx = -dx;
-		} else if (x + dx < 100) {
-			x = 100;
-			dx = -dx;
-		} else {
-			x += dx;
-		}
-
-		if (y == court_floor - radius - 21) {
-			dx *= .95;
-			if (Math.abs(dx) < .1) {
-				dx = 0;
-			}
-		}
-
-		if (y > court_floor - radius - 21) {
-			y = court_floor - radius - 21;
-			//music.playSong();
-			dy *= energyloss;
-			dy = -dy;
-		} else {
-			dy += gravity * dt;
-			y += dy * dt + .5 * gravity * dt * dt;
-		}
-
-		if (y == court_floor - radius - 21 && Math.abs(dy) < 5) {
-			dy = 0;
-			y = court_floor - radius - 21;
-		}
-
-		ball.setX(x);
-		ball.setY(y);
+		ball.update();
+		ball.move();
+		
 
 	}
 
@@ -148,14 +144,22 @@ public class Driver extends JPanel implements ActionListener, KeyListener { // a
 
 		f.setResizable(false);
 		f.addKeyListener(this);
-
+		f.addMouseListener(this);
+		
+		background = new Background("background.jpg");
 		court = new Court("basketballCourt.png");
 		right = new Hoops("rightHoop.png", "right");
 		left = new Hoops("leftHoop.png", "left");
-		Player1 = new Player("leftStand.png", "rightStand.png", "right.gif", "left.gif", 550, 180);
-		Player2 = new Player("leftStand2.png", "rightStand2.png", "right2.gif", "left2.gif", 400, 180);
+		Player1 = new Player("leftStand.png", "rightStand.png", "right.gif", "left.gif", "right1Shoot", 550, 220);
+		Player2 = new Player("leftStand2.png", "rightStand2.png", "right2.gif", "left2.gif", "right1Shoot", 400, 220);
 		ball = new Basketball("basketball.png");
-		//music = new Music("BOUNCE+1.wav", c);
+		music = new Music("BOUNCE+1.wav", c);
+		scoreboard = new Scoreboard("scoreboard.jpg");
+		
+		scoreV.setText(Integer.toString(visit));
+		scoreV.setForeground(Color.RED);
+		scoreV.setBounds(405, 0, 200, 100);
+		f.add(scoreV);
 		f.add(this);
 
 		// end creating objects
@@ -172,6 +176,7 @@ public class Driver extends JPanel implements ActionListener, KeyListener { // a
 	boolean p2R = false;
 	boolean p1R = false;
 	boolean p2L = false;
+	//boolean p1Shoot = false
 
 	/**
 	 * Gets the key code so the players can move in according directions
@@ -210,8 +215,26 @@ public class Driver extends JPanel implements ActionListener, KeyListener { // a
 			Player2.setRight(false);
 			Player2.setRun(true);
 		}
+		
+		if(e.getKeyCode() == 38) {
+			Player1.setShoot(true);
+			
+		}
+		
 
-		System.out.println(e.getKeyCode());
+		if(e.getKeyCode() == 32) {
+			dx=30;
+			ball.setdx(10);
+			time = Math.abs(ball.getX()+ball.radius +1173)/dx;
+			
+			dy = (ball.getY()-170)/time+ 0.5*gravity*time;
+			ball.setdy(-30);
+			//time= (Math.abs(hoopXR-ball.getX()))/dx;
+			//dy = -gravity +Math.abs(hoopY - ball.getY())/time ;
+			
+			//dy= -10;
+		}
+		
 	}
 
 	/**
@@ -235,12 +258,44 @@ public class Driver extends JPanel implements ActionListener, KeyListener { // a
 		if (e.getKeyCode() == 39) {
 			p1R = false;
 		}
+		
 	}
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println("X:"+e.getX());
+		System.out.println("Y:"+e.getY());
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
