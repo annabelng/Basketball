@@ -19,10 +19,10 @@ public class Player extends JPanel {
 	private int x, y;
 
 	// img variable that will contain board image
-	private Image img, img2;
-	private boolean run, shoot;
+	private Image img;
+	private boolean run, shooting, checkDribble;
 	private boolean right, left;
-	private String rightStand, leftStand, rightRun, leftRun, rightShoot, leftShoot;
+	private String rightStand, leftStand, rightRun, leftRun, shoot, dribble;
 	
 	/**
 	 * Constructor for the Player object
@@ -34,7 +34,7 @@ public class Player extends JPanel {
 	 * @param rightRun		gif file
 	 * @param leftRun		gif file
 	 */
-	public Player(String leftStand, String rightStand, String rightRun, String leftRun, String rightShoot, int x, int y) {
+	public Player(String leftStand, String rightStand, String rightRun, String leftRun, String shoot, String dribble, int x, int y) {
 		// sets up board image to be drawn
 		run = false;
 		String src = new File("").getAbsolutePath() + "/src/";
@@ -48,7 +48,8 @@ public class Player extends JPanel {
 		this.rightRun = rightRun;
 		this.leftRun = leftRun;
 		//this.leftShoot = leftShoot;
-		this.rightShoot = rightShoot;
+		this.shoot = shoot;
+		this.dribble = dribble;
 
 	}
 
@@ -59,7 +60,7 @@ public class Player extends JPanel {
 	 * Checks if Player is facing left or right based off of direction last run was in
 	 * Paints the standing image, not running gif
 	 */
-	public void paint(Graphics g) {
+	public void stand(Graphics g) {
 		if(left == true) {
 		img = getImg(leftStand);
 		Graphics2D g2 = (Graphics2D) g;
@@ -73,13 +74,20 @@ public class Player extends JPanel {
 	}
 	
 	public void shoot(Graphics g) {
-		img2 = getImg(rightShoot);
+		img = getImg(shoot);
 		
 		Graphics2D g2 = (Graphics2D) g;
-		g2.drawImage(img2, x, y, this);
+		g2.drawImage(img, x+45, y, this);
 
 	}
 
+	public boolean getRight() {
+		return right;
+	}
+	
+	public boolean getLeft() {
+		return left;
+	}
 	/**
 	 * Chooses whether to make the player run or stand
 	 * @param r
@@ -89,11 +97,19 @@ public class Player extends JPanel {
 	}
 	
 	public void setShoot(boolean s) {
-		shoot = s;
+		shooting = s;
 	}
 	
 	public boolean getShoot() {
-		return shoot;
+		return shooting;
+	}
+	
+	public void setDribble(boolean d) {
+		checkDribble = d;
+	}
+	
+	public boolean getDribble() {
+		return checkDribble;
 	}
 
 	/**
@@ -110,20 +126,36 @@ public class Player extends JPanel {
 	public void run(Graphics g) {
 		
 		if(left == true) {
-		img2 = getImg(leftRun);
 		
-		Graphics2D g2 = (Graphics2D) g;
-		g2.drawImage(img2, x, y, this);
-		if(x>100)
-		x-=12;
+			if(checkDribble == true) {
+				img = getImg(dribble);
+				Graphics2D g2 = (Graphics2D) g;
+				g2.drawImage(img, x, y, this);
+				if(x>100)
+					x-=12;
+			}else {
+				img = getImg(leftRun);
+				
+				Graphics2D g2 = (Graphics2D) g;
+				g2.drawImage(img, x, y, this);
+				if(x>100)
+					x-=12;
+			}
 		}
 		if(right == true) {
-			img2 = getImg(rightRun);
-			
-			Graphics2D g2 = (Graphics2D) g;
-			g2.drawImage(img2, x, y, this);
-			if(x<1000)
-			x+=12;
+			if(checkDribble == true) {
+				Graphics2D g2 = (Graphics2D) g;
+				g2.drawImage(img, x, y, this);
+				if(x>100)
+					x-=12;
+			}else {
+				img = getImg(rightRun);
+				
+				Graphics2D g2 = (Graphics2D) g;
+				g2.drawImage(img, x, y, this);
+				if(x<1000)
+				x+=12;
+			}
 		}
 
 	}
@@ -134,6 +166,14 @@ public class Player extends JPanel {
 	 */
 	public void setLeft(boolean left) {
 		this.left = left;
+	}
+	
+	public int getX() {
+		return this.x;
+	}
+	
+	public int getY() {
+		return this.y;
 	}
 	
 	/**
