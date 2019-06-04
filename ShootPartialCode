@@ -1,0 +1,7 @@
+			ball.setdx(20); 
+			double dis = Math.abs(ball.getX() - hoopXR);
+			time = (double) Math.abs(dis)/(double)(ball.getdy())*(0.1);
+			
+			
+			ball.setdy((int)((double)((hoopY -(ball.getdy()))/time) - (double)(0.5*gravity*time)));
+			
