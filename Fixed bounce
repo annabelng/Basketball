@@ -1,0 +1,31 @@
+x+=dx;
+		
+		y+=dy;
+		dy+=gravity;
+		
+		if (x  > court_wall - radius - 1) {
+			x = court_wall - radius - 1;
+			dx = -dx;
+		} else if (x  < 100) {
+			x = 100;
+			dx = -dx;
+		}
+
+		if (y >= court_floor - radius) {
+			dx *= .7;
+			if (Math.abs(dx) < .1) {
+				dx = 0;
+			}
+		}
+		
+		if(y >= court_floor - radius) {
+			y = court_floor - radius;
+			dy*=energyloss;
+			if(dy>0) {
+				dy*=-1;
+			}
+		}
+		
+		if(Math.abs(dx) <= 0.5) {
+			dy*=0.1;
+		}
