@@ -1,4 +1,6 @@
 import java.awt.Color;
+import java.awt.Font;
+
 import javax.sound.sampled.Clip;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -14,165 +16,291 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 /**
- * 
- * @authors annabelNg, jaidenSmith, scottyKrysl, minjunKim
+ * Main driver of the basketball program
  */
-public class Driver extends JPanel implements ActionListener, KeyListener { // add more things if you need to
+public class Driver extends JPanel implements ActionListener, KeyListener {
+
+	// initializes the scores for both players
+	int score1 = 0, score2 = 0;
 
 	/**
-	 * Sets up the different objects
+	 * declares the different objects
 	 */
 	Court court;
 	Hoops right, left;
-	Player Player1;
-	Player Player2;
-	Background background;
-	ArrayList keys = new ArrayList<Integer>();
-	
-	boolean p1Dribble, p2Dribble;
+	Player Player1, Player2;
 	Basketball ball;
+	Scoreboard scoreboard;
+	Background background;
 
-	// Music music;
-	// Clip c;
+	// initializes arraylists to keep track of scores
+	// results of the arraylist are printed out in console as a test
+	ArrayList scores1 = new ArrayList<Integer>();
+	ArrayList scores2 = new ArrayList<Integer>();
+
+	// various flags that control the player's actions
+	boolean p1Dribble, p2Dribble;
+	boolean p1Ball, p2Ball;
+
+	// music objects
+	Music music;
+	Clip c;
+
+	// initializes screen size
 	int screen_width = 1350;
 	int screen_height = 660;
 
-	int court_floor = 410;
-	int court_wall = 1090;
-
-	int radius = 50;// size
-	int y = 0; // ball top left corner
-	int x = 300; // ball top left corner
-	int dx = 10; // velocity in the x
-	int dy = 10; // velocity in the y
-
-	double gravity = 15;
-	double energyloss = .65;
-	double dt = .2;
-	double time = 0;
 	/**
 	 * Paints and repaints the images on the board rather than just adding the
 	 * images to the JPanel
+	 * 
+	 * Useful for updating and manipulating the objects, especially objects with
+	 * images across the screen
 	 * 
 	 * @param g
 	 */
 	public void paint(Graphics g) {
 		super.paintComponents(g);
 
-		// painting the board png
+		// painting the various objects on the court
 		background.paint(g);
 		court.paint(g);
 		right.paint(g);
 		left.paint(g);
+		scoreboard.paint(g);
 		ball.paint(g);
-		
 
-		
+		// checks if the left or right arrow key for player 1 is detected
+		// set up in the key listener down below
 		if (p1L || p1R) {
+			// calls run method that switches imgs and gifs to the correct one
 			Player1.run(g);
+			// once player is done running, switch off boolean flag for running
 			Player1.setRun(false);
-		} else if (Player1.getShoot() == true && p2Dribble == false) {
+			// if player isn't running, check if player is shooting
+			// only 1 player can shoot at a time
+		} else if (Player1.getShoot() == true && Player2.getShoot() == false) {
+			// set run to false again in case boolean for running still isn't
+			// false
 			Player1.setRun(false);
+			// set boolean for shooting to true
+			Player1.setShoot(true);
+			// call the shoot method -- simulates the shooting motion
 			Player1.shoot(g);
+			// set the shoot boolean to false to prevent shooting when player
+			// isn't supposed
+			// to be
 			Player1.setShoot(false);
 		} else {
+			// if player isn't shooting or running, player is standing
+			Player1.setShoot(false);
+			// call the stand method from the player class
 			Player1.stand(g);
+			Player1.setShoot(false);
 		}
 
+		// does the same exact checks but with player 2
 		if (p2R || p2L) {
 			Player2.run(g);
 			Player2.setRun(false);
-		} else if (Player2.getShoot() == true && p1Dribble == false) {
+		} else if (Player2.getShoot() == true && Player1.getShoot() == false) {
 			Player2.setRun(false);
+			Player2.setShoot(true);
 			Player2.shoot(g);
 			Player2.setShoot(false);
 		} else {
+			Player2.setShoot(false);
 			Player2.stand(g);
-		
+			Player1.setShoot(false);
+
 		}
-		if(ball.getX()==right.getX() && ball.getY()==right.getY()+75) {
-			g.drawString("3POINTER", 0, 0);
-			System.out.println("shot!!!");
+
+		// sets up rectangles for basketball and hoop rims to check for baskets
+		Rectangle bball = new Rectangle(ball.getX(), ball.getY(), 30, 30);
+		Rectangle rightHoop = new Rectangle(right.getX() + 110,
+				right.getY() + 130, 45, 1);
+		Rectangle leftHoop = new Rectangle(left.getX() + 225,
+				right.getY() + 130, 45, 1);
+		// checks if ball intersects the right rim
+		if (bball.intersects(rightHoop)) {
+			// test print statement
+			System.out.println("SHOT");
+			// add 1 to score
+			// score increments based off of how well the ball intersected with
+			// the rim
+			score1++;
+			// test score statement
+			System.out.println(score1);
+
+			// adds score to arraylist as a test
+			scores1.add(score1);
+			// printed out to see results
+			for (int i = 0; i < scores1.size(); i++) {
+				System.out.print(scores1.get(i) + " ");
+			}
+
 		}
+
+		// same checks but for the left hoop rim
+		if (bball.intersects(leftHoop)) {
+			System.out.println("SHOT");
+			// increments other player's score
+			score2++;
+			System.out.println(score2);
+
+			// adds to other player's test arraylist
+			scores2.add(score2);
+			for (int i = 0; i < scores2.size(); i++) {
+				System.out.print(scores2.get(i) + " ");
+			}
+
+		}
+
+		// initializes font and color for the scoreboard
+		Font s = new Font("IMPACT", Font.BOLD, 40);
+		g.setColor(Color.RED);
+		// sets font and color up
+		g.setFont(s);
+		// draws the scores on the corresponding sides of the scoreboard
+		g.drawString(Integer.toString(score2), 592, 118);
+		g.drawString(Integer.toString(score1), 710, 118);
 	}
 
 	public void update() {
-		// fix ball paint method so that it doesn't repaint the ball after every
-		// iteration of the below loops
+		// calls the ball bounce method so the physics of bouncing is simulated
+		// and the ball's location is constantly updated, not standing still
 		ball.bounce();
 
+		// sets up rectangles to check for intersections between players and
+		// ball
 		Rectangle bball = new Rectangle(ball.getX(), ball.getY(), 30, 30);
 		Rectangle p1 = new Rectangle(Player1.getX(), Player1.getY(), 95, 200);
 		Rectangle p2 = new Rectangle(Player2.getX(), Player2.getY(), 95, 200);
-		Rectangle rightRim = new Rectangle (right.getX(), right.getY()+50, 30, 30);
-		
+
+		// if player 1 intersects the ball
 		if (p1.intersects(bball)) {
+			// player 2 can't have the ball and therefore can't affect any
+			// motion of the
+			// ball
+			// set the ball boolean to false
+			p2Ball = false;
+			// once player 1 has the ball, player 2 can also no longer dribble
+			// set the dribble boolean to false
 			p2Dribble = false;
+			// test print statement to check location and intersection
 			System.out.println(Player1.getX());
-			if(Player1.getRight()) {
+			// if player 1 is moving to the right
+
+			if (Player1.getRight()) {
+				// the ball goes to the player's arm and is moved up a little
+				// bit to simulate
+				// dribbling
 				ball.setX(Player1.getX() + 65);
-			}else {
+			} else {
+				// otherwise, if it's on the left, ball goes to the other side
+				// of the player
 				ball.setX(Player1.getX() - 25);
 			}
+
+			// y location of ball is also reset to the waist area of the player
 			ball.setY(Player1.getY() + 50);
 
+			// test print statement to check intersection
 			System.out.println("intersection");
-			
+
+			// call the dribbling method of the ball to simulate dribbling
+			// motion
 			ball.dribbleRight(Player1.getY() + 50);
+			// sets the player 1 booleans to true, which will be true until
+			// player 2 gets
+			// the ball
 			p1Dribble = true;
+			p1Ball = true;
 		}
 
+		// checks for intersection of player 2
 		if (p2.intersects(bball)) {
+			// switches the according booleans on and off
+			p1Ball = false;
 			p1Dribble = false;
+			// test print statement
 			System.out.println(Player2.getX());
-			
-			if(Player2.getRight()) {
+
+			// checks for direction
+			if (Player2.getRight()) {
+				// sets ball x accordingly
 				ball.setX(Player2.getX() + 65);
-			}else {
+			} else {
 				ball.setX(Player2.getX() - 25);
 			}
-			
+
+			// check for intersection
 			System.out.println("intersection");
+			// call ball dribbling method to simulate dribbling
 			ball.dribbleLeft(Player2.getY() + 50);
+			// player 2 booleans will be true until player 1 gets the ball again
 			p2Dribble = true;
+			p2Ball = true;
 
 		}
 
-		if (p2.intersects(p1) && (p1Dribble == true || p2Dribble == true)) {
+		// checks for steals between player 1 and 2
+		// checks if either player intersects the other, both players aren't
+		// shooting =
+		// both are either
+		// dribbling or running, and ball is still below the heads of the
+		// players
+		if ((p2.intersects(p1) || p1.intersects(p2))
+				&& Player1.getShoot() == false && Player2.getShoot() == false
+				&& ball.getY() >= Player1.getY()) {
+			// generates a random number between 10 and 0
 			int rand = (int) (Math.random() * 10);
+			// if random number falls between this range, execute the steal code
 			if (rand >= 3 && rand <= 5) {
 				System.out.println("steal");
 
+				// if player 1 has the ball, player 1 loses the ball to player 2
 				if (p1Dribble == true) {
 					p1Dribble = false;
+					p1Ball = false;
+					// test print statements
 					System.out.println("P2 stole the ball");
-					x = Player2.getX() + 45;
-					y = Player2.getY() + 50;
-					
 					System.out.println("STEAL");
-					ball.setX(x);
-					ball.setY(y);
-					p2Dribble = true;
-				}
-				if (p2Dribble == true) {
-					p2Dribble = false;
-					System.out.println("P1 stole the ball");
-					x = Player1.getX() + 45;
-					y = Player1.getY() + 50;
 
+					// set the x of the ball to player 2's area
+					ball.setX(Player2.getX() + 45);
+					ball.setY(Player2.getY() + 50);
+
+					// player 2's booleans are now true until player 1 gets the
+					// ball again
+					// all these booleans are used for these intersection checks
+					p2Dribble = true;
+					p2Ball = true;
+				} else {
+					// if player 2 has the ball, he loses it to player 1
+					// P2 booleans are set false
+					p2Ball = false;
+					p2Dribble = false;
+
+					// test print statements
+					System.out.println("P1 stole the ball");
 					System.out.println("STEAL");
-					ball.setX(x);
-					ball.setY(y);
+
+					// set the ball's x to player 1's area
+					ball.setX(Player1.getX() + 45);
+					ball.setY(Player1.getY() + 50);
+
+					// set player 1's booleans true until player 2 gets the ball
+					// again
 					p1Dribble = true;
+					p1Ball = true;
 				}
 			}
-
 		}
 	}
 
 	// ============================ code above
 	@Override
-
 	public void actionPerformed(ActionEvent arg0) {
 		update();
 		repaint();
@@ -192,25 +320,29 @@ public class Driver extends JPanel implements ActionListener, KeyListener { // a
 		JFrame f = new JFrame();
 		f.setTitle("Basketballers");
 		f.setSize(screen_width, screen_height);
-		// f.getContentPane().setBackground(Color.BLACK);
 
 		f.setResizable(false);
 		f.addKeyListener(this);
 
-		background = new Background("background.jpg");
-		court = new Court("basketballCourt.png");
-		right = new Hoops("rightHoop.png", "right");
-		left = new Hoops("leftHoop.png", "left");
-		Player1 = new Player("leftStand.png", "rightStand.png", "right1.gif", "left.gif", "rightShoot.gif",
-				"leftDribble.png", 550, 180);
-		Player2 = new Player("leftStand2.png", "rightStand3.png", "right2.gif", "left2.gif", "leftShoot.gif",
-				"leftDribble.gif", 400, 180);
-		ball = new Basketball("basketball.png");
-		// music = new Music("BOUNCE+1.wav", c);
+		// initializes the various objects with the filenames, x, y, width,
+		// height
+		background = new Background("background.jpg", 0, 0, 1350, 898);
+		court = new Court("basketballCourt.png", -10, -100, 1350, 810);
+		right = new Hoops("rightHoop.png", 405, 405, 1040, 28);
+		left = new Hoops("leftHoop.png", 405, 405, -90, 28);
+		Player1 = new Player("leftStand.png", "rightStand.png", "right1.gif",
+				"left.gif", "rightShoot.gif", "leftDribble.png", 550, 180);
+		Player2 = new Player("leftStand2.png", "rightStand3.png", "right2.gif",
+				"left2.gif", "leftShoot.gif", "leftDribble.gif", 400, 180);
+		scoreboard = new Scoreboard("scoreboard.jpg", 560, 0, 200, 133);
+		ball = new Basketball("basketball.png", 300, 0, 30, 30);
+
+		music = new Music("BOUNCE+1.wav", c);
+		// add all the objects
 		f.add(this);
 
 		// end creating objects
-		t = new Timer(100, this);
+		t = new Timer(75, this);
 
 		t.start();
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -219,10 +351,12 @@ public class Driver extends JPanel implements ActionListener, KeyListener { // a
 
 	Timer t;
 
+	// sets up booleans that check for the keys
 	boolean p1L = false;
 	boolean p2R = false;
 	boolean p1R = false;
 	boolean p2L = false;
+
 	// boolean p1Shoot = false
 
 	/**
@@ -233,95 +367,104 @@ public class Driver extends JPanel implements ActionListener, KeyListener { // a
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		// ideas --> use an arraylist and once key is pressed add to arraylist and then
-		// remove
-		
+
+		// if left arrow key is pressed
+		// p1 is facing to the left and is running
+		// key boolean is set to true until key is released (code below)
 		if (e.getKeyCode() == 37) {
 			Player1.setRight(false);
 			Player1.setLeft(true);
 			Player1.setRun(true);
 			p1L = true;
-			
+
 		}
 
+		// if right arrow key is pressed
+		// p1 is facing to the right and is running
+		// key boolean is set to true until key is released (code below)
 		if (e.getKeyCode() == 39) {
 			Player1.setRight(true);
 			Player1.setLeft(false);
 			Player1.setRun(true);
 			p1R = true;
-			
+
 		}
 
+		// if D key is pressed
+		// p2 is facing to the right and is running
+		// key boolean is set to true until key is released (code below)
 		if (e.getKeyCode() == 68) {
 			p2R = true;
 			Player2.setLeft(false);
 			Player2.setRight(true);
 			Player2.setRun(true);
-			
+
 		}
 
+		// if A is pressed
+		// p2 is facing to the left and is running
+		// key boolean is set to true until key is released (code below)
 		if (e.getKeyCode() == 65) {
 			p2L = true;
 			Player2.setLeft(true);
 			Player2.setRight(false);
 			Player2.setRun(true);
-			
+
 		}
 
+		// if up arrow key is pressed
+		// player 1 is shooting, facing to the right, and not running
+		// the ball also begins the shooting motion
+		// key boolean is set to true until key is released (code below)
 		if (e.getKeyCode() == 38) {
 			Player1.setLeft(false);
 			Player1.setRight(true);
 			Player1.setRun(false);
 			Player1.setShoot(true);
-			ball.shoot(5);
+			if (p1Ball == true)
+				ball.shoot(5);
 		}
 
+		// if w key is pressed
+		// player 2 is shooting, facing to the left, and not running
+		// ball also begins shooting motion
+		// key boolean is set to true until key is released (code below)
 		if (e.getKeyCode() == 87) {
 			Player2.setLeft(true);
 			Player2.setRight(false);
 			Player2.setRun(false);
 			Player2.setShoot(true);
-			ball.shoot(-5);
+			if (p2Ball == true)
+				ball.shoot(-5);
 		}
 
-		
+		// test print statement
 		System.out.println(e.getKeyCode());
 	}
 
 	/**
-	 * Once the key is released, set the things back to default
+	 * Once the key is released, set the booleans back to default
 	 * 
 	 * @param e
 	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
+		// left arrow key
 		if (e.getKeyCode() == 37) {
 			p1L = false;
 		}
-
+		// D key
 		if (e.getKeyCode() == 68) {
 			p2R = false;
 		}
+		// A key
 		if (e.getKeyCode() == 65) {
 			p2L = false;
 		}
+		// right arrow key
 		if (e.getKeyCode() == 39) {
 			p1R = false;
-		}
-		for(int i = 0; i < keys.size(); i++) {
-			if(keys.get(i).equals(37)) {
-				keys.remove(i);
-			}
-			if(keys.get(i).equals(68)) {
-				keys.remove(i);
-			}
-			if(keys.get(i).equals(65)) {
-				keys.remove(i);
-			}
-			if(keys.get(i).equals(39)) {
-				keys.remove(i);
-			}
 		}
 	}
 

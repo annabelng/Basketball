@@ -15,97 +15,127 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class TitleScreen extends JPanel implements MouseListener, ActionListener{
-	
+/**
+ * 
+ * @author jaidenSmith Sets up the main intro screen with buttons that link to
+ *         an instruction page, a how to play page, and a button that exits
+ *
+ */
+public class TitleScreen extends JPanel implements MouseListener, ActionListener {
+
+	// intro music
 	Music music;
 	Clip c;
-	//Background b = new Background("ball.gif");
-	
+
+	// different buttons on the screen
 	JButton start = new JButton("Start");
 	JButton quit = new JButton("Quit");
-	
+	JButton htp = new JButton("How to Play");
+
+	// JLabel to set up background gif
 	JLabel background;
 	String screen = "ball.gif";
-	
-	JLabel basketballers = new JLabel("Basketballers");
-	
+
+	// background text
+	JLabel basketballers = new JLabel("BASKETBALLERS");
+
+	// initializing size
 	int screen_width = 800;
-	int screen_height = 700;
-	
+	int screen_height = 800;
+
 	JFrame f;
-	
-	Font font = new Font("Courier New", 1, 50);
-	
+
+	Font font = new Font("DIN CONDENSED", 1, 45);
+
+	// paint method
 	public void paint(Graphics g) {
 		super.paintComponents(g);
-		
-		g.setFont(font);
-		
 
-	}
-	
-	public void update() {
-		
 	}
 
 	@Override
 
+	/**
+	 * Includes the click detection for the Start, Quit, and How to Play Buttons
+	 */
 	public void actionPerformed(ActionEvent arg0) {
-		update();
+		// update();
 		repaint();
 		
-		if(arg0.getSource() == start) {
+		//effects of clicking the start button
+		if (arg0.getSource() == start) {
 			Driver d = new Driver();
+			music.getClip().stop();
 			f.dispose();
+			
 		}
-		
-		if(arg0.getSource() == quit) {
+
+		//effects of clicking the quit button
+		if (arg0.getSource() == quit) {
 			System.exit(0);
+			music.getClip().stop();
+		}
+
+		//effects of clicking the instructions button
+		if (arg0.getSource() == htp) {
+			Instructions i = new Instructions();
+			music.getClip().stop();
+			f.dispose();
 		}
 
 	}
 
-	
 	/**
 	 * Initializes the images and objects
+	 * Sets up all the different buttons and imageIcons
 	 */
 	public TitleScreen() {
 		f = new JFrame();
 		f.setTitle("Basketballers");
 		f.setSize(screen_width, screen_height);
 		f.getContentPane().setBackground(Color.BLACK);
-		
-		String src = new File("").getAbsolutePath()+"/src/"; //path to image setup
-		ImageIcon backscreen = new ImageIcon(src+screen);
-		
+
+		String src = new File("").getAbsolutePath() + "/src/"; // path to image setup
+		ImageIcon backscreen = new ImageIcon(src + screen);
+
 		background = new JLabel(backscreen);
-		
+
 		background.setBounds(0, 0, 800, 800);
 
 		f.setResizable(false);
 		f.setLayout(null);
-		//f.addKeyListener(this);
+		// f.addKeyListener(this);
 		f.addMouseListener(this);
-		
-		
-		music = new Music("BOUNCE+1.wav", c);
-		
-		start.setBounds(200, 600, 100, 50);
+
+		//initializing music
+		music = new Music("NBA 2K12 Intro and Greatest Players Intro.wav", c);
+		music.playSong();
+
+		//initializing start button
+		start.setBounds(150, 500, 100, 50);
 		start.addActionListener(this);
-		
-		quit.setBounds(500, 600, 100, 50);
+
+		//initializing how to play button
+		htp.setBounds(350, 600, 100, 50);
+		htp.addActionListener(this);
+
+		//initializing quit button
+		quit.setBounds(550, 500, 100, 50);
 		quit.addActionListener(this);
-		
+
+		//add butons to screen
 		f.add(start);
+		f.add(htp);
 		f.add(quit);
-		
-		basketballers.setBounds(150, 100, 500, 100);
+
+		//add text to screen
+		basketballers.setBounds(210, 100, 500, 100);
+		basketballers.setFont(font);
+		basketballers.setForeground(Color.ORANGE);
 		f.add(basketballers);
-		
+
 		f.add(background);
 		f.add(this);
-		
-		
 
 		// end creating objects
 		t = new Timer(100, this);
@@ -116,47 +146,41 @@ public class TitleScreen extends JPanel implements MouseListener, ActionListener
 	}
 
 	Timer t;
-	
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		TitleScreen t = new TitleScreen();
 
 	}
 
-
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 }

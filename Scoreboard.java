@@ -1,60 +1,28 @@
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.io.File;
+/**
+ * 
+ * @author annabelng, jaidenSmith
+ * Sets up the scoreboard image that will contain the different scores
+ * Inherits from the imageObject class in order to get the
+ * paint method, getters, and setters
+ */
+public class Scoreboard extends imageObject {
 
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
+	/**
+	 * Extends imageObject parent class, which supers 
+	 * the x,y coordinates, width, height, and links the 
+	 * filename to the imageIcon
+	 * 
+	 * Child class also contains paint method and getters + setters
+	 * @param filename
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
+	public Scoreboard(String filename, int x, int y, int width, int height) {
+		// sets up board image to be drawn
+		super(x, y, width, height, filename);
 
-public class Scoreboard extends JPanel{
-	private int x, y;
-	private Image img;
-	
-	public Scoreboard(String filename) {
-		//sets up board image to be drawn
-			String src = new File("").getAbsolutePath() + "/src/";
-			ImageIcon ast = new ImageIcon(src + filename);
-			this.x = 575;
-			this.y = 0;				
-			img = getImage(filename);
-	}
-	
-	public void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-		g2.drawImage(img, x, y, this);
-		
-		
-		
 	}
 
-	//getter for the image
-	private Image getImage(String path) {
-
-		img = Toolkit.getDefaultToolkit().getImage("scoreboard.jpg");
-		return img;
-	}
-	
-	public void update(){
-		
-	}
-	
-	public int getX(){
-		return x;
-	}
-	
-	public void setX(int x){
-		this.x =x;
-	}
-	
-	public int getY(){
-		return y;
-	}
-	
-	public void setY(int y){
-		this.y =y;
-	}
-	
-	
 }
-

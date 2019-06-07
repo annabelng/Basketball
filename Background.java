@@ -1,56 +1,27 @@
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.geom.AffineTransform;
-import java.io.File;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 /**
  * Background of the game
+ * Prevents images from glitching out on the screen
+ * 
+ * Inherits the paint method, getters, and setters, from parent imageIcon class
  * @author annabelng, jaidenSmith
  *
  */
-public class Background extends JPanel{
+public class Background extends imageObject{
 
-	private int x,y;
-	private int width, height;
-	private Image img;
-	
 	/**
 	 * Takes in the filename of the object so the 
 	 * image and imageIcon can be initialized
+	 * 
+	 * Uses super to construct the image and initialize x,y,width,height values
 	 * @param filename
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
 	 */
-	public Background(String filename) {
+	public Background(String filename, int x, int y, int width, int height) {
 		//sets up board image to be drawn
-		String src = new File("").getAbsolutePath() + "/src/";
-		ImageIcon ast = new ImageIcon(src + filename);
-		this.x = 0;
-		this.y = 0;
-
-		img = getImage(filename);
-	}
-
-	/**
-	 * method that allows board to be painted in the paint method
-	 * as opposed to simply being added into the frame
-	 */
-	public void paint(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
-		g2.drawImage(img, x, y, this);
-	}
-
-	/**
-	 * Gets the image of the court and returns it
-	 * @param path
-	 * @return
-	 */
-	private Image getImage(String path) {
-
-		img = Toolkit.getDefaultToolkit().getImage(path);
-		return img;
+		super(x,y,width,height,filename);
 	}
 	
 }
